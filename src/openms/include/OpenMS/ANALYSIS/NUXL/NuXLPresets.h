@@ -176,6 +176,49 @@ namespace OpenMS
     "A:+C5H9N1-NH3-H3PO4"
   };
 
+  static constexpr std::array<const char*, 36> modifications_RNA_NM_EXTENDED_H2O
+  {
+    "U:+C5H9N1",
+    "U:+C5H9N1-HPO3",
+    "U:+C5H9N1-H2O",
+    "U:+C5H9N1-H3PO4",
+    "U:+C5H9N1-H2O-H2O",
+    "U:+C5H9N1-H3PO4-H2O",
+    
+    "G:+C5H9N1",
+    "G:+C5H9N1-HPO3",
+    "G:+C5H9N1-H2O",
+    "G:+C5H9N1-H3PO4",
+    "G:+C5H9N1-H2O-H2O",
+    "G:+C5H9N1-H3PO4-H2O",
+    "G:+C5H9N1-NH3",
+    "G:+C5H9N1-NH3-H2O",
+    "G:+C5H9N1-NH3-HPO3",
+    "G:+C5H9N1-NH3-H3PO4",
+    "G:+C5H9N1+H2O",
+
+    "C:+C5H9N1",
+    "C:+C5H9N1-HPO3",
+    "C:+C5H9N1-H2O",
+    "C:+C5H9N1-H3PO4",
+    "C:+C5H9N1-H2O-H2O",
+    "C:+C5H9N1-H3PO4-H2O",
+    "C:+C5H9N1-NH3",
+    "C:+C5H9N1-NH3-H2O",
+    "C:+C5H9N1-NH3-HPO3",
+    "C:+C5H9N1-NH3-H3PO4",
+    
+    "A:+C5H9N1",
+    "A:+C5H9N1-HPO3",
+    "A:+C5H9N1-H2O",
+    "A:+C5H9N1-H3PO4",
+    "A:+C5H9N1-NH3",
+    "A:+C5H9N1-NH3-H2O",
+    "A:+C5H9N1-NH3-HPO3",
+    "A:+C5H9N1-NH3-H3PO4",
+    "A:+C5H9N1+H2O"
+  };
+
   static constexpr std::array<const char*, 4> modifications_RNA_DEB
   { 
     "U:+C4H6O2",
@@ -502,7 +545,6 @@ namespace OpenMS
     "d:-H3PO4",
     "d:-HPO3"
   };
-
 
   static constexpr std::array<const char*, 14> modifications_DNA_BrU_UV
   {
@@ -955,6 +997,62 @@ namespace OpenMS
     "A:C15H18N5O6P1;NM+A-NH3-H2O"
   };
 
+  // +H2O
+  static constexpr std::array<const char*, 47> fragments_RNA_NM_H2O
+  {  
+    "U:C5H9N1;NM",
+    "U:C8H9N1O1;NM+C3O",   
+    "U:C14H22N3O9P1;NM+U",
+    "U:C14H20N3O8P1;NM+U-H2O",
+    "U:C14H21N3O6;NM+U-HPO3",
+    "U:C14H19N3O5;NM+U-H3PO4",
+    "U:C9H13N3O2;NM+U'",
+    "U:C9H11N3O1;NM+U'-H2O", 
+
+    "C:C5H9N1;NM",             
+    "C:C14H23N4O8P1;NM+C",
+    "C:C14H21N4O7P1;NM+C-H2O",
+    "C:C14H20N3O8P1;NM+C-NH3",
+    "C:C14H22N4O5;NM+C-HPO3",
+    "C:C14H20N4O4;NM+C-H3PO4",   
+    "C:C14H19N3O5;NM+C-NH3-HPO3",
+    "C:C14H17N3O4;NM+C-NH3-H3PO4",
+    "C:C9H14N4O1;NM+C'",
+    "C:C9H12N4;NM+C'-H2O",
+    "C:C9H11N3O1;NM+C'-NH3",
+    "C:C14H18N3O7P1;NM+C-NH3-H2O",
+
+    "G:C5H9N1;NM",             
+    "G:C15H23N6O8P1;NM+G",
+    "G:C15H21N6O7P1;NM+G-H2O",
+    "G:C15H25N6O9P1;NM+G+H2O",
+    "G:C15H20N5O8P1;NM+G-NH3",
+    "G:C15H22N6O5;NM+G-HPO3",
+    "G:C15H20N6O4;NM+G-H3PO4",
+    "G:C15H19N5O5;NM+G-NH3-HPO3",
+    "G:C15H17N5O4;NM+G-NH3-H3PO4",
+    "G:C10H14N6O1;NM+G'",
+    "G:C10H12N6;NM+G'-H2O",
+    "G:C10H16N6O2;NM+G'+H2O",
+    "G:C10H14N6O1;NM+G'-NH3",
+    "G:C15H18N5O7P1;NM+G-NH3-H2O",
+
+    "A:C5H9N1;NM",        
+    "A:C15H23N6O7P1;NM+A",
+    "A:C15H21N6O6P1;NM+A-H2O",
+    "A:C15H25N6O8P1;NM+A+H2O",
+    "A:C15H20N5O7P1;NM+A-NH3",
+    "A:C15H22N6O4;NM+A-HPO3",
+    "A:C15H20N6O3;NM+A-H3PO4", 
+    "A:C15H19N5O4;NM+A-NH3-HPO3",
+    "A:C15H17N5O3;NM+A-NH3-H3PO4",  		
+    "A:C10H14N6;NM+A'",
+    "A:C10H11N5;NM+A'-NH3",
+    "A:C10H16N6O;NM+A'+H2O",
+    "A:C15H18N5O6P1;NM+A-NH3-H2O"
+  };
+
+
   static constexpr std::array<const char*, 46> fragments_RNA_FA
   {
     "U:C3O;C3O",
@@ -1126,7 +1224,7 @@ namespace OpenMS
     static constexpr std::array<const char*, 5> DNA_mapping {"A->A", "C->C", "G->G", "T->T", "d->d"};
     static constexpr std::array<const char*, 4> RNA_mapping {"A->A", "C->C", "G->G", "U->U"};
 
-    static constexpr std::array<const char*, 24> presets_names {
+    static constexpr std::array<const char*, 25> presets_names {
       "none", 
       "RNA-UV (U)", 
       "RNA-UV (UCGA)",
@@ -1140,6 +1238,7 @@ namespace OpenMS
       "RNA-DEB Extended", 
       "RNA-NM",
       "RNA-NM Extended", 
+      "RNA-NM Extended (+H2O)"
       "DNA-UV", 
       "DNA-UV Extended", 
       "DNA-DEB", 
@@ -1206,7 +1305,10 @@ namespace OpenMS
 
     StringList RNA_NM_modifications(modifications_RNA_NM.begin(), modifications_RNA_NM.end());
     StringList RNA_NM_EXTENDED_modifications(modifications_RNA_NM_EXTENDED.begin(), modifications_RNA_NM_EXTENDED.end());
+    StringList RNA_NM_EXTENDED_H2O_modifications(modifications_RNA_NM_EXTENDED_H2O.begin(), modifications_RNA_NM_EXTENDED_H2O.end());
+
     StringList RNA_NM_fragments(fragments_RNA_NM.begin(), fragments_RNA_NM.end()); 
+    StringList RNA_NM_fragments_H2O(fragments_RNA_NM_H2O.begin(), fragments_RNA_NM_H2O.end()); 
 
     StringList DNA_DEB_modifications(modifications_DNA_DEB.begin(), modifications_DNA_DEB.end());
     StringList DNA_DEB_EXTENDED_modifications(modifications_DNA_DEB_EXTENDED.begin(), modifications_DNA_DEB_EXTENDED.end());
@@ -1378,7 +1480,18 @@ namespace OpenMS
       fragment_adducts = RNA_NM_fragments; 
       can_cross_link = RNA_UCGA;
       return;
-    }    
+    }
+    else if (p == "RNA-NM Extended (+H2O)")
+    {
+      // add special methionine loss
+      auto r_ptr = const_cast<Residue*>(ResidueDB::getInstance()->getResidue('M'));
+      r_ptr->addLossFormula(EmpiricalFormula("CH4S1"));
+
+      modifications = RNA_NM_EXTENDED_H2O_modifications;
+      fragment_adducts = RNA_NM_fragments_H2O; 
+      can_cross_link = RNA_UCGA;
+      return;
+    }
     else if (p == "DNA-DEB")
     {
       modifications = DNA_DEB_modifications;
