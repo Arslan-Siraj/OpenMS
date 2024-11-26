@@ -1009,7 +1009,7 @@ namespace OpenMS
     "U:C9H13N3O2;NM+U'",
     "U:C9H11N3O1;NM+U'-H2O", 
 
-    "C:C5H9N1;NM",             
+    "C:C5H9N1;NM", 
     "C:C14H23N4O8P1;NM+C",
     "C:C14H21N4O7P1;NM+C-H2O",
     "C:C14H20N3O8P1;NM+C-NH3",
@@ -1238,7 +1238,7 @@ namespace OpenMS
       "RNA-DEB Extended", 
       "RNA-NM",
       "RNA-NM Extended", 
-      "RNA-NM Extended (+H2O)"
+      "RNA-NM Extended (+H2O)",
       "DNA-UV", 
       "DNA-UV Extended", 
       "DNA-DEB", 
