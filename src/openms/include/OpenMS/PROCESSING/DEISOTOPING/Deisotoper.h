@@ -113,6 +113,8 @@ class OPENMS_DLLAPI Deisotoper
                                     A number higher than max_isopeaks will effectively disable use_decreasing_model completely.
    * @param [add_up_intensity] Sum up the total intensity of each isotopic pattern into the intensity of the reported monoisotopic peak
    * @param [annotate_features] Annotates the feature index in the IntegerDataArray: "feature_number".
+   * @param [preserve_high_intensity_peaks] If true, the highest intensity peak of each isotopic pattern will never be filtered
+   * @param [preserve_low_mz_peaks_threshold] If preserve_high_intensity_peaks is set, all peaks with smaller m/z will never be filtered
    *
    * Note: If @p make_single_charged is selected, the original charge (>=1) gets annotated.
    */
@@ -130,7 +132,9 @@ class OPENMS_DLLAPI Deisotoper
                                          bool use_decreasing_model = true,
                                          unsigned int start_intensity_check = 2,
                                          bool add_up_intensity = false,
-                                         bool annotate_features = false);
+                                         bool annotate_features = false,
+                                         bool preserve_high_intensity_peaks = false,
+                                         double preserve_low_mz_peaks_threshold = 0.0);
 };
 
 }
