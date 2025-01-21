@@ -9,16 +9,10 @@
 
 #include <OpenMS/CHEMISTRY/ISOTOPEDISTRIBUTION/CoarseIsotopePatternGenerator.h>
 #include <OpenMS/CONCEPT/Constants.h>
-<<<<<<< HEAD:src/openms/source/FILTERING/DATAREDUCTION/Deisotoper.cpp
-#include <OpenMS/FILTERING/DATAREDUCTION/Deisotoper.h>
-#include <OpenMS/FILTERING/TRANSFORMERS/WindowMower.h>
-#include <OpenMS/FILTERING/TRANSFORMERS/NLargest.h>
-#include <OpenMS/FILTERING/TRANSFORMERS/ThresholdMower.h>
-=======
 #include <OpenMS/PROCESSING/DEISOTOPING/Deisotoper.h>
+#include <OpenMS/PROCESSING/FILTERING/WindowMower.h>
 #include <OpenMS/PROCESSING/FILTERING/NLargest.h>
 #include <OpenMS/PROCESSING/FILTERING/ThresholdMower.h>
->>>>>>> origin/develop:src/openms/source/PROCESSING/DEISOTOPING/Deisotoper.cpp
 #include <OpenMS/KERNEL/MSSpectrum.h>
 #include <OpenMS/KERNEL/StandardTypes.h>
 #include <OpenMS/MATH/MathFunctions.h>
@@ -389,17 +383,11 @@ void Deisotoper::deisotopeAndSingleCharge(MSSpectrum& spec,
     return; 
   }
 
-<<<<<<< HEAD:src/openms/source/FILTERING/DATAREDUCTION/Deisotoper.cpp
   const bool preserve_high_intensity_peaks = true;
   const double preserve_low_mz_peaks_threshold = 154.0; // low m/z marker ion are often only 1 Da apart which would get them removed by Deisotoper
-
-
-  Size charge_index(0);
-  Size iso_peak_count_index(0);
-=======
   Size charge_index{};
-  Size iso_peak_count_index{}, feature_number_dataarray_index{};
->>>>>>> origin/develop:src/openms/source/PROCESSING/DEISOTOPING/Deisotoper.cpp
+  Size iso_peak_count_index{};
+  Size feature_number_dataarray_index{};
 
   // reserve integer data array to store charge of peaks
   if (annotate_charge)
@@ -418,17 +406,12 @@ void Deisotoper::deisotopeAndSingleCharge(MSSpectrum& spec,
     iso_peak_count_index = spec.getIntegerDataArrays().size()-1;
   }
 
-<<<<<<< HEAD:src/openms/source/FILTERING/DATAREDUCTION/Deisotoper.cpp
-  // in case of an empty spectrum we still create the integer data arrays and return.
-  if (spec.empty()) { return; }
-=======
   if (annotate_features)
   {
     spec.getIntegerDataArrays().resize(spec.getIntegerDataArrays().size() + 1);
     spec.getIntegerDataArrays().back().setName("feature_number");
     feature_number_dataarray_index = spec.getIntegerDataArrays().size() - 1;  
   }
->>>>>>> origin/develop:src/openms/source/PROCESSING/DEISOTOPING/Deisotoper.cpp
 
   // during discovery phase, work on a constant reference (just to make sure we do not modify spec)
   const MSSpectrum& old_spectrum = spec;

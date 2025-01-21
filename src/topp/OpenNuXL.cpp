@@ -70,7 +70,7 @@
 #include <OpenMS/FORMAT/IdXMLFile.h>
 #include <OpenMS/FORMAT/TextFile.h>
 
-#include <OpenMS/MATH/MISC/MathFunctions.h>
+#include <OpenMS/MATH/MathFunctions.h>
 #include <OpenMS/MATH/STATISTICS/StatisticFunctions.h>
 
 #include <boost/regex.hpp>
@@ -88,7 +88,7 @@
 #include <iterator>
 
 #include <OpenMS/ANALYSIS/ID/AScore.h>
-#include <OpenMS/FILTERING/ID/IDFilter.h>
+#include <OpenMS/PROCESSING/ID/IDFilter.h>
 
 #include <OpenMS/COMPARISON/SPECTRA/BinnedSpectrum.h>
 
