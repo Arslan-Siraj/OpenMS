@@ -8,6 +8,7 @@
 
 #include <OpenMS/APPLICATIONS/SearchEngineBase.h>
 
+#include <OpenMS/ANALYSIS/ID/PercolatorFeatureSetHelper.h>
 #include <OpenMS/ANALYSIS/ID/PeptideIndexing.h>
 #include <OpenMS/CHEMISTRY/ModificationsDB.h>
 #include <OpenMS/CHEMISTRY/ProteaseDB.h>
@@ -15,6 +16,7 @@
 #include <OpenMS/DATASTRUCTURES/String.h>
 #include <OpenMS/FORMAT/CsvFile.h>
 #include <OpenMS/FORMAT/FileHandler.h>
+#include <OpenMS/FORMAT/MzMLFile.h>
 #include <OpenMS/METADATA/ProteinIdentification.h>
 #include <OpenMS/METADATA/SpectrumMetaDataLookup.h>
 #include <OpenMS/SYSTEM/File.h>
@@ -173,6 +175,9 @@ protected:
 
     registerIntOption_("matches_per_spec", "<num>", 1, "Number of matches per spectrum to be reported (MS-GF+ parameter '-n')", false);
     setMinInt_("matches_per_spec", 1);
+
+    registerIntOption_("min_peaks", "<num>", 10, "Minimum number of ions a spectrum must have to be examined", false); 
+    setMinInt_("min_peaks", 10); 
 
     registerStringOption_("add_features", "<true/false>", "true", "Output additional features (MS-GF+ parameter '-addFeatures'). This is required by Percolator and hence by default enabled.", false, false);
     setValidStrings_("add_features", ListUtils::create<String>("true,false"));
@@ -501,7 +506,7 @@ protected:
       if (!JavaInfo::canRun(java_executable))
       {
         writeLogError_("Fatal error: Java is needed to run MS-GF+!");
-        return EXTERNAL_PROGRAM_ERROR;
+        return EXTERNAL_PROGRAM_NOTFOUND;
       }
     }
     else
@@ -575,6 +580,7 @@ protected:
                    << "-ntt" << QString::number(tryptic_code)
                    << "-minLength" << QString::number(getIntOption_("min_peptide_length"))
                    << "-maxLength" << QString::number(getIntOption_("max_peptide_length"))
+                   << "-minNumPeaks" << QString::number(getIntOption_("min_peaks"))
                    << "-minCharge" << QString::number(min_precursor_charge)
                    << "-maxCharge" << QString::number(max_precursor_charge)
                    << "-maxMissedCleavages" << QString::number(getIntOption_("max_missed_cleavages"))
@@ -830,8 +836,12 @@ protected:
           switchScores_(pep);
         }
 
-
-        SpectrumMetaDataLookup::addMissingRTsToPeptideIDs(peptide_ids, in, false);         
+		// add missing RTs to peptide IDs
+		MSExperiment exp;
+		MzMLFile mzml_file{};
+        mzml_file.getOptions().setMetadataOnly(true);
+		mzml_file.load(in, exp); 
+        SpectrumMetaDataLookup::addMissingRTsToPeptideIDs(peptide_ids, exp);
       }
 
       // use OpenMS meta value key
@@ -854,6 +864,11 @@ protected:
 
       // if "reindex" parameter is set to true will perform reindexing
       if (auto ret = reindex_(protein_ids, peptide_ids); ret != EXECUTION_OK) return ret;
+
+      // get feature set used in percolator
+      StringList feature_set;
+      PercolatorFeatureSetHelper::addMSGFFeatures(peptide_ids, feature_set);
+      protein_ids.front().getSearchParameters().setMetaValue("extra_features", ListUtils::concatenate(feature_set, ","));
 
       FileHandler().storeIdentifications(out, protein_ids, peptide_ids, {FileTypes::IDXML});
     }

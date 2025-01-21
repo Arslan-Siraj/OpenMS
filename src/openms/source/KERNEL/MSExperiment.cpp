@@ -10,22 +10,21 @@
 
 #include <OpenMS/CONCEPT/LogStream.h>
 #include <OpenMS/DATASTRUCTURES/ListUtils.h>
-#include <OpenMS/FILTERING/TRANSFORMERS/LinearResamplerAlign.h>
+#include <OpenMS/PROCESSING/RESAMPLING/LinearResamplerAlign.h>
 #include <OpenMS/KERNEL/ChromatogramPeak.h>
 #include <OpenMS/KERNEL/Peak1D.h>
 #include <OpenMS/SYSTEM/File.h>
 
 #include <algorithm>
 #include <limits>
+#include <unordered_set>
 
 namespace OpenMS
 {
   /// Constructor
   MSExperiment::MSExperiment() :
     RangeManagerContainerType(),
-    ExperimentalSettings(),
-    ms_levels_(),
-    total_size_(0)
+    ExperimentalSettings()
   {}
 
   /// Copy constructor
@@ -41,8 +40,6 @@ namespace OpenMS
     RangeManagerContainerType::operator=(source);
     ExperimentalSettings::operator=(source);
 
-    ms_levels_ = source.ms_levels_;
-    total_size_ = source.total_size_;
     chromatograms_ = source.chromatograms_;
     spectra_ = source.spectra_;
 
@@ -226,19 +223,14 @@ namespace OpenMS
   }
 
   /**
-  @brief Updates the m/z, intensity, retention time and MS level ranges of all spectra with a certain ms level
+  @brief Updates the m/z, intensity, retention time, ion mobility and MS level ranges of all spectra with a certain ms level
 
-  @param ms_level MS level to consider for m/z range, RT range and intensity range (all MS levels if negative)
+  @param ms_level MS level to consider for m/z range, RT range, intensity range and ion mobility (if negative, all MS levels are used)
   */
   void MSExperiment::updateRanges(Int ms_level)
   {
-    // clear MS levels
-    ms_levels_.clear();
-
     // reset mz/rt/int range
     this->clearRanges();
-    // reset point count
-    total_size_ = 0;
 
     // empty
     if (spectra_.empty() && chromatograms_.empty())
@@ -251,20 +243,11 @@ namespace OpenMS
     {
       if (ms_level < Int(0) || Int(it->getMSLevel()) == ms_level)
       {
-        //ms levels
-        if (std::find(ms_levels_.begin(), ms_levels_.end(), it->getMSLevel()) == ms_levels_.end())
-        {
-          ms_levels_.push_back(it->getMSLevel());
-        }
-
-        // calculate size
-        total_size_ += it->size();
-
         // ranges
         this->extendRT(it->getRT()); // RT
-        this->extendMobility(it->getDriftTime()); // IM
+        // m/z, intensity and ion mobility from spectrum's range
         it->updateRanges();
-        this->extend(*it);           // m/z and intensity from spectrum's range
+        this->extend(*it);
       }
       // for MS level = 1 we extend the range for all the MS2 precursors
       if (ms_level == 1 && it->getMSLevel() == 2)
@@ -275,9 +258,7 @@ namespace OpenMS
           this->extendMZ(it->getPrecursors()[0].getMZ());
         }
       }
-
     }
-    std::sort(ms_levels_.begin(), ms_levels_.end());
 
     if (this->chromatograms_.empty())
     {
@@ -297,48 +278,33 @@ namespace OpenMS
         continue;
       }
 
-      total_size_ += cp.size();
-
       // ranges
       this->extendMZ(cp.getMZ());// MZ
       this->extend(cp);// RT and intensity from chroms's range
     }
   }
 
-  /// returns the minimal m/z value
-  MSExperiment::CoordinateType MSExperiment::getMinMZ() const
-  {
-    return RangeManagerType::getMinMZ();
-  }
-
-  /// returns the maximal m/z value
-  MSExperiment::CoordinateType MSExperiment::getMaxMZ() const
-  {
-    return RangeManagerType::getMaxMZ();
-  }
-
-  /// returns the minimal retention time value
-  MSExperiment::CoordinateType MSExperiment::getMinRT() const
-  {
-    return RangeManagerType::getMinRT();
-  }
-
-  /// returns the maximal retention time value
-  MSExperiment::CoordinateType MSExperiment::getMaxRT() const
-  {
-    return RangeManagerType::getMaxRT();
-  }
-
   /// returns the total number of peaks
   UInt64 MSExperiment::getSize() const
-  {
-    return total_size_;
+  {    
+    Size total_size{};
+    for (const auto& spec : spectra_) total_size += spec.size(); // sum up all peaks in all spectra
+    for (const auto& chrom : chromatograms_) total_size += chrom.size(); // sum up all peaks in all chromatograms
+    return total_size;
   }
 
-  /// returns an array of MS levels
-  const std::vector<UInt>& MSExperiment::getMSLevels() const
+  /// returns an array of MS levels (calculated on demand)
+  std::vector<UInt> MSExperiment::getMSLevels() const
   {
-    return ms_levels_;
+    std::unordered_set<UInt> level_set;
+    for (const auto& spec : spectra_)
+    {
+      level_set.insert(spec.getMSLevel());
+    }
+    
+    std::vector<UInt> ms_levels(level_set.begin(), level_set.end());
+    std::sort(ms_levels.begin(), ms_levels.end());
+    return ms_levels;
   }
 
   const String sqMassRunID = "sqMassRunID";
@@ -571,6 +537,58 @@ namespace OpenMS
     return pc_spec - spectra_.cbegin(); 
   }
 
+  MSExperiment::ConstIterator MSExperiment::getFirstProductSpectrum(ConstIterator iterator) const
+  {
+    // if we are after the end we can't go "down"
+    if (iterator == spectra_.end())
+    {
+      return spectra_.end();
+    }
+    UInt ms_level = iterator->getMSLevel();
+
+    auto tmp_spec_iter = iterator; // such that we can reiterate later
+    do
+    {
+      ++tmp_spec_iter;
+      if ((tmp_spec_iter->getMSLevel() - ms_level) == 1)
+      {
+        if (!tmp_spec_iter->getPrecursors().empty())
+        {
+          // Warn if there are multiple precursors
+          if (tmp_spec_iter->getPrecursors().size() > 1)
+          {
+              OPENMS_LOG_WARN << "Spectrum at index " << std::distance(spectra_.begin(), tmp_spec_iter)
+                        << " has multiple precursors. Only the first precursor will be considered."
+                        << std::endl;
+          }
+
+          const auto precursor = tmp_spec_iter->getPrecursors()[0];
+          String ref = precursor.getMetaValue("spectrum_ref", "");  
+          if (!ref.empty() && ref == iterator->getNativeID())
+          {
+            return tmp_spec_iter;
+          }
+        }
+      }
+      else if (tmp_spec_iter->getMSLevel() < ms_level)
+      {
+        return spectra_.end();
+      }
+    } while (tmp_spec_iter != spectra_.end());
+
+    return spectra_.end();
+  }
+
+  // same as above but easier to wrap in python
+  int MSExperiment::getFirstProductSpectrum(int zero_based_index) const
+  {
+    auto spec = spectra_.cbegin();
+    spec += zero_based_index;
+    auto pc_spec = getFirstProductSpectrum(spec);
+    if (pc_spec == spectra_.cend()) return -1;
+    return pc_spec - spectra_.cbegin();
+  }
+
   /// Swaps the content of this map with the content of @p from
   void MSExperiment::swap(MSExperiment & from)
   {
@@ -592,9 +610,6 @@ namespace OpenMS
     //swap peaks
     spectra_.swap(from.getSpectra());
 
-    //swap remaining members
-    ms_levels_.swap(from.ms_levels_);
-    std::swap(total_size_, from.total_size_);
   }
 
   /// sets the spectrum list
@@ -629,6 +644,55 @@ namespace OpenMS
   std::vector<MSSpectrum>& MSExperiment::getSpectra()
   {
     return spectra_;
+  }
+
+  /// Returns the closest(=nearest) spectrum in retention time to the given RT
+  MSExperiment::ConstIterator MSExperiment::getClosestSpectrumInRT(const double RT) const
+  {
+    auto above = RTBegin(RT);           // the spec above or equal to our RT
+    if (above == begin()) return above; // we hit the first element, or no spectra (begin==end)
+    if (above == end()) return --above; // queried beyond last spec, but we know there are spectra, so `--above` is safe
+    // we are between two spectra
+    auto diff_left = RT - (above - 1)->getRT();
+    auto diff_right = above->getRT() - RT;
+    if (diff_left < diff_right) --above;
+    return above;
+  }
+  MSExperiment::Iterator MSExperiment::getClosestSpectrumInRT(const double RT)
+  {
+    return begin() + std::distance(cbegin(), const_cast<const MSExperiment*>(this)->getClosestSpectrumInRT(RT));
+  }
+
+  /// Returns the closest(=nearest) spectrum in retention time to the given RT of a certain MS level
+  MSExperiment::ConstIterator MSExperiment::getClosestSpectrumInRT(const double RT, UInt ms_level) const
+  {
+    auto above = RTBegin(RT); // the spec above or equal to our RT
+    auto below = above; // for later
+    // search for the next available spec to the right with correct MS level
+    while (above != end() && above->getMSLevel() != ms_level)
+    {
+      ++above;
+    }
+    if (above == begin()) return above; // we hit the first element; or no spectra at all
+
+    // careful: below may be end() at this point, yet below!=begin()
+    if (below != begin()) --below; // we need to make one step left, so we are different from `above`
+    // we are not at end() (or begin()==end())
+    while (below != begin() && below->getMSLevel() != ms_level)
+    {
+      --below;
+    }
+    if (below->getMSLevel() != ms_level) return above; // below did not find anything valid; so it must be whatever `above` is (could be end())
+    if (above == end()) return below;                  // queried beyond last spec, but we know there are spectra, so it must be whatever `below` is (which we know is valid)
+    // we are between two spectra
+    auto diff_left = RT - below->getRT();
+    auto diff_right = above->getRT() - RT;
+    return (diff_left < diff_right ? below : above);
+  }
+
+  MSExperiment::Iterator MSExperiment::getClosestSpectrumInRT(const double RT, UInt ms_level)
+  {
+    return begin() + std::distance(cbegin(), const_cast<const MSExperiment*>(this)->getClosestSpectrumInRT(RT, ms_level));
   }
 
   /// sets the chromatogram list
@@ -735,8 +799,6 @@ namespace OpenMS
       clearRanges();
       this->ExperimentalSettings::operator=(ExperimentalSettings());             // no "clear" method
       chromatograms_.clear();
-      ms_levels_.clear();
-      total_size_ = 0;
     }
   }
 

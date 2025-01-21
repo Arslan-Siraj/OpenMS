@@ -122,6 +122,12 @@ namespace OpenMS
       GlobalExceptionHandler::getInstance().setMessage(what());
     }
 
+    NotSorted::NotSorted(const char* file, int line, const char* function, const std::string& message) noexcept:
+      BaseException(file, line, function, "NotSorted", message)
+    {
+      GlobalExceptionHandler::getInstance().setMessage(what());
+    }
+
     FailedAPICall::FailedAPICall(const char* file, int line, const char* function, const std::string& message) noexcept :
       BaseException(file, line, function, "FailedAPICall", message)
     {
@@ -162,6 +168,13 @@ namespace OpenMS
     {
       GlobalExceptionHandler::getInstance().setMessage(what());
     }
+
+    ExternalExecutableNotFound::ExternalExecutableNotFound(const char* file, int line, const char* function, const std::string& filename) noexcept:
+        BaseException(file, line, function, "ExternalExecutableNotFound", "the executable '" + filename + "' could not be found")
+    {
+      GlobalExceptionHandler::getInstance().setMessage(what());
+    }
+    
 
     FileNotReadable::FileNotReadable(const char* file, int line, const char* function, const std::string& filename) noexcept :
       BaseException(file, line, function, "FileNotReadable", "the file '" + filename + "' is not readable for the current user")

@@ -440,4 +440,31 @@ namespace OpenMS
     return tools_combo_->currentText();
   }
 
+  String ToolsDialog::getExtension()
+  {
+    // Try to Return the first valid string for the extension on the output parameter
+    // If we can't get any valid strings show an error.
+    String extension = FileTypes::typeToName(FileTypes::UNKNOWN);
+    auto validStrings = vis_param_.getValidStrings(output_combo_->currentText().toStdString()); 
+    // If we have only one valid output type use that
+    if (validStrings.size() == 1)
+    {
+      extension = validStrings[0];
+      // Remove the leading .*
+      extension = extension.suffix(extension.size() - 2);
+    }
+    // Otherwise the type is unknown
+    else 
+    {
+      // If we have no valid types, produce an error
+      if (validStrings.empty())
+        {
+          QMessageBox::critical(this, "Error", QString("Error determining output type from tool. Tool is not compatible with TOPPView"));
+        }
+          // If we have multiple valid output types, we don't know what the file actually contains, so use UNKNOWN
+
+    }
+    return extension;
+  }
+
 }

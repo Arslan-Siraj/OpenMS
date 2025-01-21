@@ -14,8 +14,8 @@
 #include <OpenMS/KERNEL/FeatureMap.h>
 #include <OpenMS/KERNEL/ConsensusMap.h>
 #include <OpenMS/CONCEPT/ProgressLogger.h>
-#include <OpenMS/MATH/MISC/MathFunctions.h>
-#include <OpenMS/MATH/STATISTICS/StatisticFunctions.h>
+#include <OpenMS/MATH/MathFunctions.h>
+#include <OpenMS/MATH/StatisticFunctions.h>
 
 #include <QtCore/QFileInfo>
 
@@ -1500,7 +1500,6 @@ namespace OpenMS
 
         UInt spectrum_count = 0;
         Size peptide_hit_count = 0;
-        UInt runs_count = 0;
         Size protein_hit_count = 0;
         set<String> peptides;
         set<String> proteins;
@@ -1531,7 +1530,6 @@ namespace OpenMS
 
         for (Size i = 0; i < prot_ids.size(); ++i)
         {
-          ++runs_count;
           protein_hit_count += prot_ids[i].getHits().size();
           const vector<ProteinHit>& temp_hits = prot_ids[i].getHits();
           for (Size j = 0; j < temp_hits.size(); ++j)
