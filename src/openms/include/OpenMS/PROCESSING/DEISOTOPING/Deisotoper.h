@@ -134,7 +134,7 @@ class OPENMS_DLLAPI Deisotoper
                                          bool add_up_intensity = false,
                                          bool annotate_features = false,
                                          bool preserve_high_intensity_peaks = false,
-                                         double preserve_low_mz_peaks_threshold = 0.0);
+                                         double preserve_low_mz_peaks_threshold = -1e10);
 };
 
 }

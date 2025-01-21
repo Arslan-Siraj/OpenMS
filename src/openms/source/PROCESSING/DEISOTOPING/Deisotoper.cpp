@@ -615,7 +615,7 @@ void Deisotoper::deisotopeAndSingleCharge(MSSpectrum& spec,
             }
             
             // ratio of first isotopic peak to monoisotopic peak may not be too large otherwise it might be just a satelite peak (e.g, amidation)
-            if (i == 1 && old_spectrum[p].getIntensity() / old_spectrum[extensions.back()].getIntensity() > 10.0)
+            if (use_decreasing_model && (i == 1 && old_spectrum[p].getIntensity() / old_spectrum[extensions.back()].getIntensity() > 10.0))
             {
               has_min_isopeaks = (i >= min_isopeaks);
               break;
