@@ -68,14 +68,14 @@ pi.setHits(std::vector<PeptideHit>(1,hit));
 START_SECTION((void SpectrumAnnotator::annotateMatches(PeakSpectrum& spec, const PeptideHit& ph, const TheoreticalSpectrumGenerator& tg, const SpectrumAlignment& sa) const))
 
   annot.annotateMatches(spec, hit, tg, sa);
-  string annotlist[] = {"y1", "y2", "b2", "y3", "b3", "y4", "b4", "y5", "b5", "b6", "y6"};
+  string annotlist[] = {"y1+", "y2+", "b2+", "y3+", "b3+", "y4+", "b4+", "y5+", "b5+", "b6+", "y6+"};
 
   PeakSpectrum::StringDataArray types = spec.getStringDataArrays().front();
 
   ABORT_IF(spec.size() != types.size() || types.size() != pls)
   for (size_t i = 0; i < spec.size(); ++i)
   {
-    TEST_STRING_EQUAL(types[i],annotlist[i])
+    TEST_STRING_EQUAL(types[i], annotlist[i])
   }
   TEST_REAL_SIMILAR(spec.getMetaValue("fragment_mass_tolerance"),0.1)
 END_SECTION

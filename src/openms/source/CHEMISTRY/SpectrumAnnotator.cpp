@@ -188,10 +188,6 @@ namespace OpenMS
         intensities.push_back(spec[i].getIntensity());
         match_intensity += spec[i].getIntensity();
         mzs.push_back(spec[i].getMZ());
-        if (charge_annotations.size() == type_annotations.size())
-        {
-          ion_name += String(charge_annotations[i], '+');
-        }
 
         if (terminal_series_match_ratio_)
         {

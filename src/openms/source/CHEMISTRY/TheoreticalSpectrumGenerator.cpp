@@ -319,7 +319,7 @@ namespace OpenMS
     {
       if (add_metainfo_)
       {
-        ion_names.emplace_back("iP");
+        ion_names.emplace_back("iP+");
         charges.push_back(1);
       }
       spectrum.emplace_back(70.0656, 1.0); // emplace_back(MZ, intensity)
@@ -330,7 +330,7 @@ namespace OpenMS
     {
       if (add_metainfo_)
       {
-        ion_names.emplace_back("iC");
+        ion_names.emplace_back("iC+");
         charges.push_back(1);
       }
       spectrum.emplace_back(76.0221, 1.0);
@@ -341,7 +341,7 @@ namespace OpenMS
     {
       if (add_metainfo_)
       {
-        ion_names.emplace_back("iL/I");
+        ion_names.emplace_back("iL/I+");
         charges.push_back(1);
       }
       spectrum.emplace_back(86.09698, 1.0);
@@ -352,7 +352,7 @@ namespace OpenMS
     {
       if (add_metainfo_)
       {
-        ion_names.emplace_back("iH");
+        ion_names.emplace_back("iH+");
         charges.push_back(1);
       }
       spectrum.emplace_back(110.0718, 1.0);
@@ -363,7 +363,7 @@ namespace OpenMS
     {
       if (add_metainfo_)
       {
-        ion_names.emplace_back("iF");
+        ion_names.emplace_back("iF+");
         charges.push_back(1);
       }
       spectrum.emplace_back(120.0813, 1.0);
@@ -374,7 +374,7 @@ namespace OpenMS
     {
       if (add_metainfo_)
       {
-        ion_names.emplace_back("iY");
+        ion_names.emplace_back("iY+");
         charges.push_back(1);
       }
       spectrum.emplace_back(136.0762, 1.0);
@@ -385,7 +385,7 @@ namespace OpenMS
     {
       if (add_metainfo_)
       {
-        ion_names.emplace_back("iW");
+        ion_names.emplace_back("iW+");
         charges.push_back(1);
       }
       spectrum.emplace_back(159.0922, 1.0);
@@ -988,14 +988,15 @@ namespace OpenMS
                                                         DataArrays::IntegerDataArray& charges,
                                                         Int charge) const
   {
+    const String charge_str((Size)abs(charge), '+');
     String ion_name;
     if (charge == 1)
     {
-      ion_name = "[M+H]";
+      ion_name = "[M+H]" + charge_str;
     }
     else
     { 
-      ion_name = "[M+" + String(charge) + "H]";
+      ion_name = "[M+" + String(charge) + "H]" + charge_str;
     }
 
     // precursor peak
@@ -1064,11 +1065,11 @@ namespace OpenMS
           String ion_name;
           if (charge == 1)
           {
-            ion_name = "[M+H-H2O]";
+            ion_name = "[M+H-H2O]" + charge_str;
           }
           else
           { 
-            ion_name = "[M+" + String(charge) + "H-H2O]";
+            ion_name = "[M+" + String(charge) + "H-H2O]" + charge_str;
           }
           ion_names.push_back(ion_name);
           charges.push_back(charge);
@@ -1083,11 +1084,11 @@ namespace OpenMS
         String ion_name;
         if (charge == 1)
         {
-          ion_name = "[M+H-H2O]";
+          ion_name = "[M+H-H2O]" + charge_str;
         }
         else
         { 
-          ion_name = "[M+" + String(charge) + "H-H2O]";
+          ion_name = "[M+" + String(charge) + "H-H2O]" + charge_str;
         }
         ion_names.push_back(ion_name);
         charges.push_back(charge);
@@ -1122,11 +1123,11 @@ namespace OpenMS
           String ion_name;
           if (charge == 1)
           {
-            ion_name = "[M+H-NH3]";
+            ion_name = "[M+H-NH3]" + charge_str;
           }
           else
           { 
-            ion_name = "[M+" + String(charge) + "H-NH3]";
+            ion_name = "[M+" + String(charge) + "H-NH3]" + charge_str;
           }
 
           ion_names.push_back(ion_name);
@@ -1142,11 +1143,11 @@ namespace OpenMS
         String ion_name;
         if (charge == 1)
         {
-          ion_name = "[M+H-NH3]";
+          ion_name = "[M+H-NH3]" + charge_str;
         }
         else
         { 
-          ion_name = "[M+" + String(charge) + "H-NH3]";
+          ion_name = "[M+" + String(charge) + "H-NH3]" + charge_str;
         }        
         ion_names.push_back(ion_name);
         charges.push_back(charge);
