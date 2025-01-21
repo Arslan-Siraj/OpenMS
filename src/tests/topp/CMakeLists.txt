@@ -1925,8 +1925,8 @@ add_test("TOPP_OpenNuXL_5_out1" ${DIFF} -whitelist "IdentificationRun date"
 set_tests_properties("TOPP_OpenNuXL_5_out1" PROPERTIES DEPENDS "TOPP_OpenNuXL_5")
 
 # reporting of multiple hits and tsv output and decoy generation with huge mass window so that all candidates are scored
-add_test("TOPP_OpenNuXL_6" ${TOPP_BIN_PATH}/OpenNuXL -test -precursor:mass_tolerance 10.0 -in
-${DATA_DIR_TOPP}/OpenNuXL_1_input.mzML -NuXL:decoys "true" -database ${DATA_DIR_TOPP}/OpenNuXL_1_input.fasta -out OpenNuXL_6_output.tmp.idXML -report:top_hits 2 -out_tsv OpenNuXL_6_output2.tmp.tsv -precursor:mass_tolerance 1e9 -NuXL:scoring slow)
+add_test("TOPP_OpenNuXL_6" ${TOPP_BIN_PATH}/OpenNuXL -test -precursor:mass_tolerance 1e9 -in
+${DATA_DIR_TOPP}/OpenNuXL_1_input.mzML -NuXL:decoys "true" -database ${DATA_DIR_TOPP}/OpenNuXL_1_input.fasta -out OpenNuXL_6_output.tmp.idXML -report:top_hits 2 -out_tsv OpenNuXL_6_output2.tmp.tsv -NuXL:scoring slow)
 add_test("TOPP_OpenNuXL_6_out1" ${DIFF} -whitelist "IdentificationRun date"
 "db=" -in1 OpenNuXL_6_output.tmp.idXML -in2 ${DATA_DIR_TOPP}/OpenNuXL_6_output.idXML )
 add_test("TOPP_OpenNuXL_6_out2" ${DIFF} -in1 OpenNuXL_6_output2.tmp.tsv -in2 ${DATA_DIR_TOPP}/OpenNuXL_6_output2.tsv )
